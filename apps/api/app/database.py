@@ -1,12 +1,8 @@
-import os
-
+from app.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./ias12_dev.db",
-)
+DATABASE_URL = settings.DATABASE_URL
 
 # SQLite needs check_same_thread=False for FastAPI
 connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}

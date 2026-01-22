@@ -46,3 +46,38 @@ class AuditLog(Base):
     new_values = Column(Text)  # JSON string
     reason = Column(String(500))
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+
+class Entity(Base):
+    """Legal entity for tax purposes."""
+
+    __tablename__ = "entities"
+
+    id = Column(Integer, primary_key=True)
+    code = Column(String(20), unique=True, nullable=False)  # e.g., "ABC-PK"
+    name = Column(String(255), nullable=False)  # e.g., "ABC Ltd Pakistan"
+    jurisdiction = Column(String(100), nullable=False)  # e.g., "Pakistan"
+    currency = Column(String(3), nullable=False)  # e.g., "PKR"
+    tax_authority = Column(String(100))  # e.g., "FBR"
+    fiscal_year_end = Column(String(5), nullable=False)  # e.g., "12-31" or "06-30"
+    is_active = Column(Integer, default=1)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    periods = relationship("Period", back_populates="entity")
+
+
+class Period(Base):
+    """Fiscal period for deferred tax calculation."""
+
+    __tablename__ = "periods"
+
+    id = Column(Integer, primary_key=True)
+    entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False)
+    period_end = Column(String(10), nullable=False)  # e.g., "2024-12-31"
+    period_name = Column(String(50), nullable=False)  # e.g., "Dec 2024"
+    status = Column(String(20), default="open")  # open, draft, approved, locked
+    created_at = Column(DateTime, default=datetime.utcnow)
+    locked_at = Column(DateTime, nullable=True)
+    locked_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+
+    entity = relationship("Entity", back_populates="periods")

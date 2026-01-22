@@ -134,3 +134,32 @@ class ChartOfAccounts(Base):
     __table_args__ = (
         sa.UniqueConstraint("entity_id", "account_code", name="uq_entity_account"),
     )
+
+
+class AccountMapping(Base):
+    """Maps GL accounts to tax categories and rules."""
+
+    __tablename__ = "account_mappings"
+
+    id = Column(Integer, primary_key=True)
+    entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False)
+    account_code = Column(String(50), nullable=False)
+    tax_category = Column(
+        String(50), nullable=False
+    )  # fixed_assets, provisions, inventory, leases, etc.
+    tax_base_rule = Column(
+        String(50), nullable=False
+    )  # carrying_amount, tax_wdv, nil, etc.
+    deductibility = Column(
+        String(50), nullable=False
+    )  # on_accrual, on_payment, non_deductible
+    posting_route = Column(String(20), nullable=False)  # pnl, oci, equity
+    description = Column(String(255))
+    is_active = Column(Integer, default=1)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+    updated_by = Column(Integer, ForeignKey("users.id"))
+
+    __table_args__ = (
+        sa.UniqueConstraint("entity_id", "account_code", name="uq_entity_mapping"),
+    )

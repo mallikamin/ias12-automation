@@ -3,6 +3,7 @@
 ## What This System Does
 
 A configurable IAS 12 (Income Taxes) engine that:
+
 - Extracts book balances from GL and subledgers
 - Determines tax bases via rule-mapping
 - Computes temporary differences (Carrying Amount − Tax Base)
@@ -12,12 +13,12 @@ A configurable IAS 12 (Income Taxes) engine that:
 
 ## Who Uses It
 
-| Role | Responsibilities |
-|------|------------------|
-| Preparer | Runs extracts, reviews unmapped exceptions, drafts register |
-| Reviewer | Validates mappings, unusual movements, DTA probability flags |
-| CFO Approver | Approves journals and key assumptions |
-| Admin | Maintains master data (rates, mappings) with logged changes |
+| Role         | Responsibilities                                             |
+| ------------ | ------------------------------------------------------------ |
+| Preparer     | Runs extracts, reviews unmapped exceptions, drafts register  |
+| Reviewer     | Validates mappings, unusual movements, DTA probability flags |
+| CFO Approver | Approves journals and key assumptions                        |
+| Admin        | Maintains master data (rates, mappings) with logged changes  |
 
 ## Key Benefits
 
@@ -27,6 +28,7 @@ A configurable IAS 12 (Income Taxes) engine that:
 - Full traceability: Every DTA/DTL line links back to source transactions
 
 ## Architecture
+
 ```
 React Web App (UI)
        │
@@ -40,6 +42,7 @@ PostgreSQL Database
 ## Scope
 
 ### In Scope (Phase 1)
+
 - Deferred tax (DTA/DTL) using temporary differences method
 - Automated deferred tax register and roll-forward
 - Journal automation with P&L / OCI / Equity routing
@@ -47,6 +50,7 @@ PostgreSQL Database
 - Governance, audit trail, and approvals
 
 ### Out of Scope
+
 - Full corporate tax return preparation
 - Transfer pricing computations
 - Consolidation module (only inputs supported)

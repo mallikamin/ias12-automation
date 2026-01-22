@@ -3,12 +3,14 @@
 ## Environment Setup
 
 ### Prerequisites
+
 - Docker & Docker Compose
 - Node.js 18+
 - Python 3.11+
 - Git
 
 ### Local Development Setup
+
 ```bash
 # Clone repository
 git clone <repo-url>
@@ -41,36 +43,43 @@ cd apps/web && npm run dev
 ## Period Close Process
 
 ### Step 1: Extract Balances
+
 - Upload trial balance (Excel/CSV)
 - System validates: required columns, data types, period match
 - Review and resolve mapping gaps
 
 ### Step 2: Compute IAS 12
+
 - Create new Run (freezes inputs + config)
 - Engine computes temporary differences
 - Register generated with DTA/DTL amounts
 
 ### Step 3: Review
+
 - Check register for unusual items
 - Validate DTA probability flags
 - Add overrides with justification if needed
 
 ### Step 4: Approve
+
 - Reviewer approves register
 - CFO approves journals
 
 ### Step 5: Post Journals
+
 - Preview journal entries
 - Export to ERP format
 - Mark as posted
 
 ### Step 6: Lock Period
+
 - Lock to prevent changes
 - Export evidence pack for audit
 
 ---
 
 ## Common Commands
+
 ```bash
 # Run all tests
 cd apps/api && pytest
@@ -91,8 +100,8 @@ cd apps/api && alembic upgrade head
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| DB connection failed | Check Docker is running: `docker compose ps` |
-| Migration fails | Reset DB: `docker compose down -v` then restart |
-| API not responding | Check logs: `docker compose logs api` |
+| Issue                | Solution                                        |
+| -------------------- | ----------------------------------------------- |
+| DB connection failed | Check Docker is running: `docker compose ps`    |
+| Migration fails      | Reset DB: `docker compose down -v` then restart |
+| API not responding   | Check logs: `docker compose logs api`           |

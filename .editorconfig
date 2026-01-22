@@ -1,0 +1,28 @@
+# EditorConfig: https://editorconfig.org
+
+root = true
+
+# Defaults for all files
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Python
+[*.py]
+indent_size = 4
+
+# JavaScript / React
+[*.{js,jsx,ts,tsx}]
+indent_size = 2
+
+# JSON / YAML / Markdown
+[*.{json,yml,yaml,md}]
+indent_size = 2
+
+# Markdown: preserve trailing whitespace (used for line breaks)
+[*.md]
+trim_trailing_whitespace = false

@@ -116,3 +116,21 @@ class SourceRow(Base):
     additional_data = Column(Text)  # JSON for extra columns
 
     source_file = relationship("SourceFile", back_populates="rows")
+
+
+class ChartOfAccounts(Base):
+    """Chart of accounts for an entity."""
+
+    __tablename__ = "chart_of_accounts"
+
+    id = Column(Integer, primary_key=True)
+    entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False)
+    account_code = Column(String(50), nullable=False)
+    account_name = Column(String(255), nullable=False)
+    account_type = Column(String(50))  # asset, liability, equity, income, expense
+    parent_code = Column(String(50))  # For hierarchical COA
+    is_active = Column(Integer, default=1)
+
+    __table_args__ = (
+        sa.UniqueConstraint("entity_id", "account_code", name="uq_entity_account"),
+    )

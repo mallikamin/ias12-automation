@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: ias12_db
+    environment:
+      POSTGRES_USER: ias12
+      POSTGRES_PASSWORD: ias12_local
+      POSTGRES_DB: ias12_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: ias12_api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://ias12:ias12_local@db:5432/ias12_dev
+    depends_on:
+      - db
+    volumes:
+      - ./apps/api:/app
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: ias12_web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:

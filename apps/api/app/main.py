@@ -1,4 +1,5 @@
 from app.config import settings
+from app.errors import APIError, api_error_handler, generic_error_handler
 from app.logging_config import logger
 from fastapi import FastAPI
 
@@ -8,6 +9,10 @@ app = FastAPI(
     version="0.1.0",
     debug=settings.DEBUG,
 )
+
+# Register error handlers
+app.add_exception_handler(APIError, api_error_handler)
+app.add_exception_handler(Exception, generic_error_handler)
 
 
 @app.on_event("startup")

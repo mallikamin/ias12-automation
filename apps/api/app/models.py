@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import sqlalchemy as sa
 from app.database import Base
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
@@ -81,3 +82,37 @@ class Period(Base):
     locked_by = Column(Integer, ForeignKey("users.id"), nullable=True)
 
     entity = relationship("Entity", back_populates="periods")
+
+
+class SourceFile(Base):
+    """Uploaded source file (trial balance, FA register, etc.)."""
+
+    __tablename__ = "source_files"
+
+    id = Column(Integer, primary_key=True)
+    entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False)
+    period_id = Column(Integer, ForeignKey("periods.id"), nullable=False)
+    file_type = Column(String(50), nullable=False)  # trial_balance, fixed_assets, etc.
+    file_name = Column(String(255), nullable=False)
+    file_hash = Column(String(64))  # SHA256 for reproducibility
+    row_count = Column(Integer)
+    uploaded_by = Column(Integer, ForeignKey("users.id"))
+    uploaded_at = Column(DateTime, default=datetime.utcnow)
+
+    rows = relationship("SourceRow", back_populates="source_file")
+
+
+class SourceRow(Base):
+    """Individual row from source file."""
+
+    __tablename__ = "source_rows"
+
+    id = Column(Integer, primary_key=True)
+    source_file_id = Column(Integer, ForeignKey("source_files.id"), nullable=False)
+    row_number = Column(Integer, nullable=False)
+    account_code = Column(String(50))
+    account_name = Column(String(255))
+    balance = Column(sa.Numeric(18, 2))  # Book value / carrying amount
+    additional_data = Column(Text)  # JSON for extra columns
+
+    source_file = relationship("SourceFile", back_populates="rows")

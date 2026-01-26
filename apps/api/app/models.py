@@ -285,3 +285,20 @@ class Movement(Base):
     rate_change_impact = Column(sa.Numeric(18, 2), default=0)
     other_adjustments = Column(sa.Numeric(18, 2), default=0)
     closing_balance = Column(sa.Numeric(18, 2), default=0)
+
+
+class Journal(Base):
+    """Generated journal entries for deferred tax."""
+
+    __tablename__ = "journals"
+
+    id = Column(Integer, primary_key=True)
+    run_id = Column(Integer, ForeignKey("runs.id"), nullable=False)
+    line_number = Column(Integer, nullable=False)
+    account_code = Column(String(50), nullable=False)
+    account_name = Column(String(255))
+    debit = Column(sa.Numeric(18, 2), default=0)
+    credit = Column(sa.Numeric(18, 2), default=0)
+    posting_route = Column(String(20), nullable=False)  # pnl, oci, equity
+    description = Column(String(255))
+    register_line_ids = Column(Text)  # JSON array of register line IDs

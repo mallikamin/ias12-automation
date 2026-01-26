@@ -227,3 +227,18 @@ class Run(Base):
     __table_args__ = (
         sa.UniqueConstraint("period_id", "run_number", name="uq_period_run"),
     )
+
+
+class RunInput(Base):
+    """Links a run to its source files."""
+
+    __tablename__ = "run_inputs"
+
+    id = Column(Integer, primary_key=True)
+    run_id = Column(Integer, ForeignKey("runs.id"), nullable=False)
+    source_file_id = Column(Integer, ForeignKey("source_files.id"), nullable=False)
+    file_hash = Column(String(64), nullable=False)
+
+    __table_args__ = (
+        sa.UniqueConstraint("run_id", "source_file_id", name="uq_run_source"),
+    )

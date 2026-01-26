@@ -242,3 +242,26 @@ class RunInput(Base):
     __table_args__ = (
         sa.UniqueConstraint("run_id", "source_file_id", name="uq_run_source"),
     )
+
+
+class DeferredTaxRegister(Base):
+    """Deferred tax calculation results by line item."""
+
+    __tablename__ = "deferred_tax_register"
+
+    id = Column(Integer, primary_key=True)
+    run_id = Column(Integer, ForeignKey("runs.id"), nullable=False)
+    line_number = Column(Integer, nullable=False)
+    source_ref = Column(
+        String(100)
+    )  # Reference to source (account_code, asset_id, etc.)
+    tax_category = Column(String(50), nullable=False)
+    description = Column(String(255))
+    carrying_amount = Column(sa.Numeric(18, 2), nullable=False)
+    tax_base = Column(sa.Numeric(18, 2), nullable=False)
+    temporary_difference = Column(sa.Numeric(18, 2), nullable=False)
+    tax_rate = Column(sa.Numeric(5, 2), nullable=False)
+    deferred_tax_amount = Column(sa.Numeric(18, 2), nullable=False)
+    dta_dtl = Column(String(3), nullable=False)  # DTA or DTL
+    posting_route = Column(String(20), nullable=False)  # pnl, oci, equity
+    rule_trace = Column(Text)  # JSON: which rules were applied

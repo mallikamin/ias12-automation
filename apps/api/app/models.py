@@ -163,3 +163,67 @@ class AccountMapping(Base):
     __table_args__ = (
         sa.UniqueConstraint("entity_id", "account_code", name="uq_entity_mapping"),
     )
+
+
+class TaxRate(Base):
+    """Tax rates by entity and effective date."""
+
+    __tablename__ = "tax_rates"
+
+    id = Column(Integer, primary_key=True)
+    entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False)
+    effective_date = Column(String(10), nullable=False)  # YYYY-MM-DD
+    rate = Column(sa.Numeric(5, 2), nullable=False)  # e.g., 29.00 for 29%
+    surtax_rate = Column(
+        sa.Numeric(5, 2), default=0
+    )  # Additional super tax if applicable
+    description = Column(String(255))
+    is_enacted = Column(Integer, default=1)  # 1 = enacted, 0 = substantively enacted
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        sa.UniqueConstraint("entity_id", "effective_date", name="uq_entity_rate_date"),
+    )
+
+
+class ConfigVersion(Base):
+    """Versioned snapshot of configuration (mappings, rates, rules)."""
+
+    __tablename__ = "config_versions"
+
+    id = Column(Integer, primary_key=True)
+    entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False)
+    version_number = Column(Integer, nullable=False)
+    description = Column(String(255))
+    mappings_hash = Column(String(64))  # Hash of account_mappings at this version
+    rates_hash = Column(String(64))  # Hash of tax_rates at this version
+    created_at = Column(DateTime, default=datetime.utcnow)
+    created_by = Column(Integer, ForeignKey("users.id"))
+
+    __table_args__ = (
+        sa.UniqueConstraint("entity_id", "version_number", name="uq_entity_version"),
+    )
+
+
+class Run(Base):
+    """A single deferred tax calculation run."""
+
+    __tablename__ = "runs"
+
+    id = Column(Integer, primary_key=True)
+    entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False)
+    period_id = Column(Integer, ForeignKey("periods.id"), nullable=False)
+    config_version_id = Column(
+        Integer, ForeignKey("config_versions.id"), nullable=False
+    )
+    run_number = Column(Integer, nullable=False)  # v1, v2, v3 within a period
+    status = Column(String(20), default="draft")  # draft, reviewed, approved, posted
+    inputs_hash = Column(String(64))  # Hash of all source files used
+    created_at = Column(DateTime, default=datetime.utcnow)
+    created_by = Column(Integer, ForeignKey("users.id"))
+    approved_at = Column(DateTime)
+    approved_by = Column(Integer, ForeignKey("users.id"))
+
+    __table_args__ = (
+        sa.UniqueConstraint("period_id", "run_number", name="uq_period_run"),
+    )

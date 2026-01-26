@@ -265,3 +265,23 @@ class DeferredTaxRegister(Base):
     dta_dtl = Column(String(3), nullable=False)  # DTA or DTL
     posting_route = Column(String(20), nullable=False)  # pnl, oci, equity
     rule_trace = Column(Text)  # JSON: which rules were applied
+
+
+class Movement(Base):
+    """Period-to-period movements in deferred tax."""
+
+    __tablename__ = "movements"
+
+    id = Column(Integer, primary_key=True)
+    run_id = Column(Integer, ForeignKey("runs.id"), nullable=False)
+    tax_category = Column(String(50), nullable=False)
+    opening_balance = Column(sa.Numeric(18, 2), default=0)
+    charged_to_pnl = Column(sa.Numeric(18, 2), default=0)
+    charged_to_oci = Column(sa.Numeric(18, 2), default=0)
+    charged_to_equity = Column(sa.Numeric(18, 2), default=0)
+    acquisitions = Column(sa.Numeric(18, 2), default=0)
+    disposals = Column(sa.Numeric(18, 2), default=0)
+    fx_movement = Column(sa.Numeric(18, 2), default=0)
+    rate_change_impact = Column(sa.Numeric(18, 2), default=0)
+    other_adjustments = Column(sa.Numeric(18, 2), default=0)
+    closing_balance = Column(sa.Numeric(18, 2), default=0)
